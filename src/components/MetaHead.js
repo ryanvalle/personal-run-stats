@@ -4,7 +4,7 @@ import Head from 'next/head';
 class MetaHead extends Component {
     constructor() {
         super()
-        const defaultTitle = 'photos by ryan'
+        const defaultTitle = 'running with ryan'
         this.state = {
             pageTitle: defaultTitle
         }
