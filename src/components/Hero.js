@@ -17,8 +17,8 @@ class Hero extends Component {
 
     render(props) {
         return(
-            <div className="bg-bottom bg-cover flex dark:bg-gray-900">
-                <div className={`w-screen text-left drop-shadow-md dark:text-white p-[20px] ${this.state.position}`} ref={this.ref}>
+            <div className="bg-bottom bg-cover flex bg-gray-800 dark:bg-gray-900">
+                <div className={`w-screen text-left text-white p-[20px] ${this.state.position}`} ref={this.ref}>
                     <h1 className={`font-normal ${this.state.h1Classes}`}>
                         <span className={`font-thin`}><span className="font-bold">running</span>with<span className='font-bold'>ryan</span>🏃‍♂️</span>
                     </h1>

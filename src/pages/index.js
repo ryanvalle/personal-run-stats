@@ -1,5 +1,7 @@
 import { Roboto } from 'next/font/google'
 import Hero from '../components/Hero.js';
+import RaceTile from '../components/RaceTile.js';
+import SectionHeader from '../components/SectionHeader.js';
 import MetaHead from '@/components/MetaHead.js';
 
 const { Client } = require("@notionhq/client")
@@ -14,12 +16,14 @@ export default function Home(props) {
     <main className={roboto.className}>
       <MetaHead />
       <Hero />
-      <h2>Upcoming Races</h2>
-      <ul>
-        {props.upcoming.map(data => {
-          return <li key={data.id}>{data.name} • {new Date(data.date).toLocaleString('default', { month: 'short', day: '2-digit', year: 'numeric' }) }</li>
+      <div className="max-w-7xl w-[90%] mx-auto my-0">
+      <SectionHeader text="Upcoming Races" />
+      <div className="grid md:grid-cols-2 gap-2 py-2 auto-rows-fr">
+        {props.upcoming.map((data, idx) => {
+          // return <li key={data.id}>{idx} • {data.name} • {new Date(data.date).toLocaleString('default', { month: 'short', day: '2-digit', year: 'numeric' }) }</li>
+          return <RaceTile key={data.id} data={data} idx={idx} />
         })}
-      </ul>
+      </div>
       <h2>Running Stats</h2>
       <ul>
         <li>{props.stats.counts.marathon} marathons</li>
@@ -30,9 +34,10 @@ export default function Home(props) {
       <h2>Previous Races</h2>
       <ul>
         {props.previous.map(data => {
-          return <li key={data.id}>{data.name} • {new Date(data.date).toLocaleString('default', { month: 'short', day: '2-digit', year: 'numeric' }) }</li>
+          return <li key={data.id}>{data.name} • {new Date(data.date).toLocaleString('default', { month: 'short', day: '2-digit', year: 'numeric' }) } • {data.race_stats.finish_time.epoch}</li>
         })}
       </ul>
+      </div>
     </main>
   )
 }
@@ -70,7 +75,8 @@ export async function getServerSideProps(ctx) {
         finish_time: {
           hour: properties['result-hour'].number,
           minutes: properties['result-minutes'].number,
-          sec: properties['result-sec'].number
+          sec: properties['result-sec'].number,
+          epoch: (properties['result-hour'].number * 60 * 60) + (properties['result-minutes'].number * 60) + properties['result-sec'].number
         },
         bib: properties.bib.number,
         results_url: properties['result-url'].url
@@ -94,7 +100,7 @@ export async function getServerSideProps(ctx) {
   var upcoming = results.filter(resp => {
     let respDate = new Date(resp.date).getTime().toString();
     return respDate > dateNow;
-  })
+  }).reverse();
 
   var stats = {
     counts: {},
