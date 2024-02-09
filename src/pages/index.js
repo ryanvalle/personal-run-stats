@@ -17,20 +17,20 @@ export default function Home(props) {
       <h2>Upcoming Races</h2>
       <ul>
         {props.upcoming.map(data => {
-          return <li>{data.name} • {new Date(data.date).toLocaleString('default', { month: 'short', day: '2-digit', year: 'numeric' }) }</li>
+          return <li key={data.id}>{data.name} • {new Date(data.date).toLocaleString('default', { month: 'short', day: '2-digit', year: 'numeric' }) }</li>
         })}
       </ul>
       <h2>Running Stats</h2>
       <ul>
         <li>{props.stats.counts.marathon} marathons</li>
         <li>{props.stats.counts.half} half marathons</li>
-        <li>{props.stats.counts['10k']} 10k's</li>
-        <li>{props.stats.counts['5k']} 5k's</li>
+        <li>{props.stats.counts.tenk} 10ks</li>
+        <li>{props.stats.counts.fivek} 5ks</li>
       </ul>
       <h2>Previous Races</h2>
       <ul>
         {props.previous.map(data => {
-          return <li>{data.name} • {new Date(data.date).toLocaleString('default', { month: 'short', day: '2-digit', year: 'numeric' }) }</li>
+          return <li key={data.id}>{data.name} • {new Date(data.date).toLocaleString('default', { month: 'short', day: '2-digit', year: 'numeric' }) }</li>
         })}
       </ul>
     </main>
@@ -62,7 +62,7 @@ export async function getServerSideProps(ctx) {
     let location = (properties.location.select.name || '').split('|');
 
     return {
-      uid: properties.id || null,
+      id: properties.id || null,
       name: properties.name.title[0].plain_text,
       race_type: properties.type.select.name,
       date: properties.date.date.start + 'T00:00:00',
