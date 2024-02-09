@@ -13,10 +13,10 @@ const roboto = Roboto({
 
 export default function Home(props) {
   return (
-    <main className={roboto.className}>
+    <main className={`dark:bg-black ${roboto.className}`}>
       <MetaHead />
       <Hero />
-      <div className="max-w-7xl w-[90%] mx-auto my-0">
+      <div className="max-w-7xl w-[90%] mx-auto my-0 text-black dark:text-white">
       <SectionHeader text="Upcoming Races" />
       <div className="grid md:grid-cols-2 gap-2 py-2 auto-rows-fr">
         {props.upcoming.map((data, idx) => {

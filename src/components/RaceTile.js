@@ -16,7 +16,7 @@ class RaceTile extends Component {
 
         return(
             <div className={this.props.idx === 0 ? 'col-span-full' : ''}>
-                <div className="p-3 md:p-4 border-white border-[1px] rounded-lg md:rounded-xl h-[100%]">
+                <div className="p-3 md:p-4 border-black dark:border-white border-[1px] rounded-lg md:rounded-xl h-[100%]">
                     {this.props.idx === 0 && <h2 className={` font-normal ${DEFAULT_H2}`}>{data.name}</h2>}
                     {this.props.idx > 0 && <h2 className={`font-normal ${DEFAULT_H2_SM}`}>{data.name}</h2>}
                     <p className='font-light italic text-md'>
