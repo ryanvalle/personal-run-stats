@@ -18,7 +18,7 @@ export default function Home(props) {
       <Hero />
       <div className="max-w-7xl w-[90%] mx-auto my-0">
       <SectionHeader text="Upcoming Races" />
-      <div className="flex flex-wrap">
+      <div className="grid md:grid-cols-2 gap-2 py-2 auto-rows-fr">
         {props.upcoming.map((data, idx) => {
           // return <li key={data.id}>{idx} • {data.name} • {new Date(data.date).toLocaleString('default', { month: 'short', day: '2-digit', year: 'numeric' }) }</li>
           return <RaceTile key={data.id} data={data} idx={idx} />
