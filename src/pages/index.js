@@ -50,7 +50,7 @@ export default function Home(props) {
           </li>
         </ul>
         
-        <SectionSubHeader text="Race Stats & Highlights" />
+        <SectionSubHeader text="Personal Records" />
         <ul className='grid auto-rows-fr p-2 md:grid-cols-2 gap-2'>
           {props.records.map((record, idx) => {
             let finishTime = record.race_stats.finish_time;
