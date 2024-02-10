@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Head from 'next/head';
-import Script from 'next/script';
 
 class MetaHead extends Component {
     constructor() {
@@ -35,7 +34,7 @@ class MetaHead extends Component {
                 {!!image && <meta property="twitter:image" content={image} />}
                 {text.secondary && <meta name="twitter:description" content={text.secondary} /> }
 
-                <Script async type="text/javascript" src="/js/newrelic.js" />
+                <script async type="text/javascript" src="/js/newrelic.js" />
                 
             </Head>
         );
