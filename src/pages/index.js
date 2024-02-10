@@ -1,7 +1,8 @@
-import { Roboto } from 'next/font/google'
+import { Roboto, Kalam } from 'next/font/google'
 import Hero from '../components/Hero.js';
 import RaceTile from '../components/RaceTile.js';
 import SectionHeader from '../components/SectionHeader.js';
+import SectionSubHeader from '../components/SectionSubHeader.js';
 import MetaHead from '@/components/MetaHead.js';
 
 const { Client } = require("@notionhq/client")
@@ -11,31 +12,66 @@ const roboto = Roboto({
   weight: ['100','300', '500']
 })
 
+const kalam = Kalam({
+  subsets: ['latin'],
+  weight: ['700']
+})
+
 export default function Home(props) {
   return (
     <main className={`dark:bg-black ${roboto.className}`}>
       <MetaHead />
       <Hero />
       <div className="max-w-7xl w-[90%] mx-auto my-0 text-black dark:text-white">
-        <SectionHeader text="Upcoming Races" />
+        <SectionHeader text="Upcoming Races"/>
         <div className="grid md:grid-cols-2 gap-2 py-2 auto-rows-fr">
           {props.upcoming.map((data, idx) => {
             return <RaceTile key={data.id} data={data} idx={idx} />
           })}
         </div>
 
-        <SectionHeader text="Race Count & Stats" />
-        <ul>
-          <li>{props.stats.counts.marathon} marathons</li>
-          <li>{props.stats.counts.half} half marathons</li>
-          <li>{props.stats.counts.tenk} 10ks</li>
-          <li>{props.stats.counts.fivek} 5ks</li>
+        <SectionHeader text="Race Stats & Highlights"/>
+        <ul className='grid grid-cols-2 md:grid-cols-4 gap-2 auto-rows-fr p-2'>
+          <li className='grid text-center border-[1px] border-dotted border-black dark:border-white rounded-xl p-1' key="marathon">
+            <span className='font-light uppercase text-xs'>marathons</span>
+            <span className={`${kalam.className} text-4xl leading-[1.25em]`}>{props.stats.counts.marathon}</span>
+          </li>
+          <li className='grid text-center border-[1px] border-dotted border-black dark:border-white rounded-xl p-1' key="a=half">
+            <span className='font-light uppercase text-xs'>half marathons</span>
+            <span className={`${kalam.className} text-4xl leading-[1.25em]`}>{props.stats.counts.half}</span>
+          </li>
+          <li className='grid text-center border-[1px] border-dotted border-black dark:border-white rounded-xl p-1' key="10k">
+            <span className='font-light uppercase text-xs'>10k</span>
+            <span className={`${kalam.className} text-4xl leading-[1.25em]`}>{props.stats.counts.tenk}</span>
+          </li>
+          <li className='grid text-center border-[1px] border-dotted border-black dark:border-white rounded-xl p-1' key="5k">
+            <span className='font-light uppercase text-xs'>5k</span>
+            <span className={`${kalam.className} text-4xl leading-[1.25em]`}>{props.stats.counts.fivek}</span>
+          </li>
         </ul>
+        
+        <SectionSubHeader text="Race Stats & Highlights" />
+        <ul className='grid auto-rows-fr p-2 md:grid-cols-2 gap-2'>
+          {props.records.map((record, idx) => {
+            let finishTime = record.race_stats.finish_time;
+            let raceDate = new Date(record.date);
+            return <li key={idx} className='grid text-center border-[1px] border-dotted border-black dark:border-white rounded-xl p-1'>
+              <span className='text-sm font-light uppercase'>{record.race_type === 'marathon' ? 'marathon' : 'half-marathon'}</span>
+              <span className={`text-2xl ${kalam.className} text-center p-0 leading-[1.75rem]`}>{finishTime.hour}:{finishTime.minutes}:{finishTime.sec}</span>
+              <span className='text-sm font-light italic'>{record.name} • {raceDate.toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: '2-digit', 
+                            year: 'numeric'
+                        })}</span>
+            </li>
+          })}
+        </ul>
+
+
         <SectionHeader text="Previous Races" />
         <div className="grid md:grid-cols-2 gap-2 py-2">
           {props.previous.map((data, idx) => {
             return <RaceTile key={data.id} data={data} idx={idx} />
-            // return <li key={data.id}>{data.name} • {new Date(data.date).toLocaleString('default', { month: 'short', day: '2-digit', year: 'numeric' }) } • {data.race_stats.finish_time.epoch}</li>
           })}
         </div>
       </div>
@@ -76,7 +112,6 @@ export async function getServerSideProps(ctx) {
     let distance_string = distanceMap[properties.type.select.name];
 
     return {
-      id: properties.id || null,
       name: properties.name.title[0].plain_text,
       race_type: properties.type.select.name,
       distance_string: distance_string || `${properties.type.select.name} miles`,
@@ -123,11 +158,20 @@ export async function getServerSideProps(ctx) {
     stats['locations'][resp.location.id] = (stats.locations[resp.location.id] || 0) + 1
   })
 
+  var pr = [
+      previous.filter((p) => p.race_type === 'marathon').sort((a,b) => {
+        return a.race_stats.finish_time.epoch - b.race_stats.finish_time.epoch
+      })[0],
+      previous.filter((p) => p.race_type === 'half').sort((a,b) => {
+        return a.race_stats.finish_time.epoch - b.race_stats.finish_time.epoch
+      })[0]
+    ]  
   return {
       props: {
           upcoming: upcoming,
           previous: previous,
-          stats: stats
+          stats: stats,
+          records: pr
       }
   }
 }
