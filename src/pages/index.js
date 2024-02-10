@@ -55,7 +55,7 @@ export default function Home(props) {
           {props.records.map((record, idx) => {
             let finishTime = record.race_stats.finish_time;
             let raceDate = new Date(record.date);
-            return <li key={idx} className='grid text-center border-[1px] border-dotted border-black dark:border-white rounded-xl p-1'>
+            return <li key={record.id} className='grid text-center border-[1px] border-dotted border-black dark:border-white rounded-xl p-1'>
               <span className='text-sm font-light uppercase'>{record.race_type === 'marathon' ? 'marathon' : 'half-marathon'}</span>
               <span className={`text-2xl ${kalam.className} text-center p-0 leading-[1.75rem]`}>{finishTime.hour}:{finishTime.minutes}:{finishTime.sec}</span>
               <span className='text-sm font-light italic'>{record.name} • {raceDate.toLocaleDateString('en-US', {
@@ -110,8 +110,8 @@ export async function getServerSideProps(ctx) {
     };
 
     let distance_string = distanceMap[properties.type.select.name];
-
     return {
+      id: resp.id || null,
       name: properties.name.title[0].plain_text,
       race_type: properties.type.select.name,
       distance_string: distance_string || `${properties.type.select.name} miles`,
