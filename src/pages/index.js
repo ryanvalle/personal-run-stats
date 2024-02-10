@@ -17,26 +17,27 @@ export default function Home(props) {
       <MetaHead />
       <Hero />
       <div className="max-w-7xl w-[90%] mx-auto my-0 text-black dark:text-white">
-      <SectionHeader text="Upcoming Races" />
-      <div className="grid md:grid-cols-2 gap-2 py-2 auto-rows-fr">
-        {props.upcoming.map((data, idx) => {
-          // return <li key={data.id}>{idx} • {data.name} • {new Date(data.date).toLocaleString('default', { month: 'short', day: '2-digit', year: 'numeric' }) }</li>
-          return <RaceTile key={data.id} data={data} idx={idx} />
-        })}
-      </div>
-      <h2>Running Stats</h2>
-      <ul>
-        <li>{props.stats.counts.marathon} marathons</li>
-        <li>{props.stats.counts.half} half marathons</li>
-        <li>{props.stats.counts.tenk} 10ks</li>
-        <li>{props.stats.counts.fivek} 5ks</li>
-      </ul>
-      <h2>Previous Races</h2>
-      <ul>
-        {props.previous.map(data => {
-          return <li key={data.id}>{data.name} • {new Date(data.date).toLocaleString('default', { month: 'short', day: '2-digit', year: 'numeric' }) } • {data.race_stats.finish_time.epoch}</li>
-        })}
-      </ul>
+        <SectionHeader text="Upcoming Races" />
+        <div className="grid md:grid-cols-2 gap-2 py-2 auto-rows-fr">
+          {props.upcoming.map((data, idx) => {
+            return <RaceTile key={data.id} data={data} idx={idx} />
+          })}
+        </div>
+
+        <SectionHeader text="Race Count & Stats" />
+        <ul>
+          <li>{props.stats.counts.marathon} marathons</li>
+          <li>{props.stats.counts.half} half marathons</li>
+          <li>{props.stats.counts.tenk} 10ks</li>
+          <li>{props.stats.counts.fivek} 5ks</li>
+        </ul>
+        <SectionHeader text="Previous Races" />
+        <div className="grid md:grid-cols-2 gap-2 py-2">
+          {props.previous.map((data, idx) => {
+            return <RaceTile key={data.id} data={data} idx={idx} />
+            // return <li key={data.id}>{data.name} • {new Date(data.date).toLocaleString('default', { month: 'short', day: '2-digit', year: 'numeric' }) } • {data.race_stats.finish_time.epoch}</li>
+          })}
+        </div>
       </div>
     </main>
   )
@@ -82,15 +83,15 @@ export async function getServerSideProps(ctx) {
       date: properties.date.date.start + 'T00:00:00',
       race_stats: {
         finish_time: {
-          hour: properties['result-hour'].number,
-          minutes: properties['result-minutes'].number,
-          sec: properties['result-sec'].number,
+          hour: (properties['result-hour'].number || 0).toLocaleString('en-US', {minimumIntegerDigits: 2}),
+          minutes: (properties['result-minutes'].number || 0).toLocaleString('en-US', {minimumIntegerDigits: 2}),
+          sec: (properties['result-sec'].number || 0).toLocaleString('en-US', {minimumIntegerDigits: 2}),
           epoch: (properties['result-hour'].number * 60 * 60) + (properties['result-minutes'].number * 60) + properties['result-sec'].number
         },
         bib: properties.bib.number,
         results_url: properties['result-url'].url
       },
-      recap_vide: properties['recap-video-url'].url,
+      recap_video: properties['recap-video-url'].url,
       location: {
         city: location[0],
         state: location.length > 1 ? location[1] : '',
@@ -106,7 +107,8 @@ export async function getServerSideProps(ctx) {
   var previous = results.filter(resp => {
     let respDate = new Date(resp.date).getTime().toString();
     return respDate < dateNow;
-  })
+  });
+
   var upcoming = results.filter(resp => {
     let respDate = new Date(resp.date).getTime().toString();
     return respDate > dateNow;
