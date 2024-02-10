@@ -65,11 +65,20 @@ export async function getServerSideProps(ctx) {
   var mappedResults = response.results.map(async (resp) => {
     let properties = resp.properties || {};
     let location = (properties.location.select.name || '').split('|');
+    let distanceMap = {
+      marathon: '26.2 miles',
+      half: '13.1 miles',
+      tenk: '6.21 miles',
+      fivek: '3.1 miles'
+    };
+
+    let distance_string = distanceMap[properties.type.select.name];
 
     return {
       id: properties.id || null,
       name: properties.name.title[0].plain_text,
       race_type: properties.type.select.name,
+      distance_string: distance_string || `${properties.type.select.name} miles`,
       date: properties.date.date.start + 'T00:00:00',
       race_stats: {
         finish_time: {
@@ -87,7 +96,8 @@ export async function getServerSideProps(ctx) {
         state: location.length > 1 ? location[1] : '',
         id: properties.location.select.name
       },
-      event_url: properties['event-url'].url
+      event_url: properties['event-url'].url,
+      event_url_text: (properties['event-url-text'].rich_text[0] || {}).plain_text || ''
     };
   });
 
