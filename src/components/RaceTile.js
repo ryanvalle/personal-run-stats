@@ -52,8 +52,8 @@ class RaceTile extends Component {
                         </div>}
 
                         {/* Video */}
-                        {data.recap_video && <a href={data.recap_video} target="_blank" className='font-semibold col-span-full border-[1px] border-dotted border-black dark:border-white p-1 bg-gray-400 dark:text-black hover:bg-gray-800 hover:text-white transition-all'>
-                            <span className='font-light uppercase text-sm leading-[1rem]'>📼 Watch Recap Video</span>
+                        {data.recap_video && <a href={data.recap_video} target="_blank" className='col-span-full border-[1px] border-dotted border-black dark:border-white p-1 bg-gray-400 dark:text-black hover:bg-gray-800 hover:text-white transition-all'>
+                            <span className='font-bold uppercase text-sm leading-[1rem]'>📼 Watch Recap Video</span>
                         </a>}
                     </div>
                     <p className='font-light italic text-md text-center p-2'>
