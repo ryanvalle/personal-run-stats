@@ -1,5 +1,9 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Requirements
+
+This project requires **Node.js 24 or higher**. Use the included `.nvmrc` file with `nvm use` to switch to the correct version.
+
 ## Getting Started
 
 First, run the development server:
