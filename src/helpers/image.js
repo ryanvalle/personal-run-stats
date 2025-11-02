@@ -20,7 +20,7 @@ const imageHelpers = {
     resetModal: function(props) {
         props.setDisplayImageModal && props.setDisplayImageModal(false);
         props.setModalData && props.setModalData({});
-        if (window.gtag) {
+        if (typeof window !== 'undefined' && window.gtag) {
             window.gtag('event', 'image_modal_close');
         }
         
@@ -29,7 +29,7 @@ const imageHelpers = {
         props.setDisplayImageModal(true);
         props.setModalData(data);
 
-        if (window.gtag) {
+        if (typeof window !== 'undefined' && window.gtag) {
             window.gtag('event', 'image_modal_open', data);
         }
     }

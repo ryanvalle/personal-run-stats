@@ -4,8 +4,7 @@ import RaceTile from '../components/RaceTile.js';
 import SectionHeader from '../components/SectionHeader.js';
 import SectionSubHeader from '../components/SectionSubHeader.js';
 import MetaHead from '@/components/MetaHead.js';
-
-const { Client } = require("@notionhq/client")
+import { Client } from "@notionhq/client"
 
 const roboto = Roboto({
   subsets: ['latin'],
