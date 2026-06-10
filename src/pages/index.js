@@ -3,12 +3,13 @@ import Hero from '../components/Hero.js';
 import NextRaceCard from '../components/NextRaceCard.js';
 import RaceTile from '../components/RaceTile.js';
 import RaceHistory from '../components/RaceHistory.js';
+import PersonalRecords from '../components/PersonalRecords.js';
 import TrendChart from '../components/TrendChart.js';
 import StatCounter from '../components/StatCounter.js';
 import SectionHeader from '../components/SectionHeader.js';
 import SectionSubHeader from '../components/SectionSubHeader.js';
 import MetaHead from '@/components/MetaHead.js';
-import { TYPE_LABELS, raceMiles, formatPace } from '../helpers/race';
+import { TYPE_LABELS, raceMiles } from '../helpers/race';
 import { Client } from "@notionhq/client"
 
 const roboto = Roboto({
@@ -29,7 +30,7 @@ const COUNT_CARDS = [
 ];
 
 export default function Home(props) {
-  const { upcoming, previous, stats, records, prIds } = props;
+  const { upcoming, previous, stats, prIds } = props;
   const [nextRace, ...laterRaces] = upcoming;
   const maxYearCount = Math.max(...stats.byYear.map(([, count]) => count), 1);
 
@@ -66,37 +67,7 @@ export default function Home(props) {
           ))}
         </ul>
 
-        {records.length > 0 && (
-          <>
-            <SectionSubHeader text="Personal Records" />
-            <ul className="grid md:grid-cols-2 xl:grid-cols-4 gap-3 pt-3">
-              {records.map((record) => {
-                const finishTime = record.race_stats.finish_time;
-                const raceDate = new Date(record.date);
-                return (
-                  <li
-                    key={record.id}
-                    className="relative overflow-hidden rounded-2xl border border-amber-400/40 bg-gradient-to-br from-amber-50 to-white dark:from-amber-500/10 dark:to-slate-900 p-4 transition-transform duration-300 hover:-translate-y-1"
-                  >
-                    <span className="absolute right-3 top-3 text-2xl" aria-hidden="true">🏆</span>
-                    <span className="uppercase text-xs tracking-widest text-amber-600 dark:text-amber-400 font-medium">
-                      {TYPE_LABELS[record.race_type] || record.distance_string}
-                    </span>
-                    <div className={`${orbitron.className} text-3xl pt-1`}>
-                      {finishTime.hour}:{finishTime.minutes}:{finishTime.sec}
-                    </div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 pt-2">
-                      {formatPace(finishTime.epoch, raceMiles(record.race_type))} /mi pace
-                    </p>
-                    <p className="text-sm font-light italic pt-1">
-                      {record.name} • {raceDate.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}
-                    </p>
-                  </li>
-                );
-              })}
-            </ul>
-          </>
-        )}
+        <PersonalRecords races={previous} />
 
         {stats.byYear.length > 0 && (
           <>
@@ -208,7 +179,7 @@ export async function getServerSideProps(ctx) {
     stats['locations'][resp.location.id] = (stats.locations[resp.location.id] || 0) + 1
   })
 
-  // fastest finish per distance (skips races without a recorded time)
+  // all-time fastest finish per distance, used to badge PRs in race history
   var records = Object.keys(TYPE_LABELS).map((type) => {
     return previous
       .filter((p) => p.race_type === type && p.race_stats.finish_time.epoch > 0)
@@ -244,7 +215,6 @@ export async function getServerSideProps(ctx) {
           upcoming: upcoming,
           previous: previous,
           stats: stats,
-          records: records,
           prIds: records.map((record) => record.id)
       }
   }
