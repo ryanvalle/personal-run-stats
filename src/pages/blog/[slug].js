@@ -5,7 +5,7 @@ import remarkGfm from 'remark-gfm';
 import readingTime from 'reading-time';
 import MetaHead from '@/components/MetaHead.js';
 import Footer from '@/components/Footer.js';
-import { getPostBySlug } from '@/helpers/blog';
+import { getPostBySlug, logBlogError } from '@/helpers/blog';
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -60,7 +60,13 @@ export default function BlogPost({ post }) {
 }
 
 export async function getServerSideProps(ctx) {
-  const post = await getPostBySlug(ctx.params.slug);
+  let post = null;
+
+  try {
+    post = await getPostBySlug(ctx.params.slug);
+  } catch (error) {
+    logBlogError(`getPostBySlug(${ctx.params.slug})`, error);
+  }
 
   if (!post) {
     return { notFound: true };

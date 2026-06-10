@@ -4,14 +4,14 @@ import MetaHead from '@/components/MetaHead.js';
 import SectionHeader from '@/components/SectionHeader.js';
 import PostCard from '@/components/PostCard.js';
 import Footer from '@/components/Footer.js';
-import { getPublishedPosts } from '@/helpers/blog';
+import { getPublishedPosts, logBlogError } from '@/helpers/blog';
 
 const roboto = Roboto({
   subsets: ['latin'],
   weight: ['100', '300', '500', '700']
 });
 
-export default function Blog({ posts }) {
+export default function Blog({ posts, loadError = false }) {
   return (
     <main className={`min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 ${roboto.className}`}>
       <MetaHead data={{ primary: 'Blog', secondary: 'Training notes, race recaps, and everything in between.' }} />
@@ -33,7 +33,9 @@ export default function Blog({ posts }) {
       <div className="max-w-7xl w-[90%] mx-auto pb-16">
         <SectionHeader emoji="📝" text="Latest Posts" />
         {posts.length === 0 ? (
-          <p className="pt-6 text-slate-500">No posts yet — check back soon.</p>
+          <p className="pt-6 text-slate-500">
+            {loadError ? 'Posts are unavailable right now — check back soon.' : 'No posts yet — check back soon.'}
+          </p>
         ) : (
           <div className="grid gap-4 pt-3 md:grid-cols-2 lg:grid-cols-3">
             {posts.map((post) => <PostCard key={post.id} post={post} />)}
@@ -46,14 +48,25 @@ export default function Blog({ posts }) {
 }
 
 export async function getServerSideProps(ctx) {
-  ctx.res.setHeader(
-    'Cache-Control',
-    'public, s-maxage=3600, stale-while-revalidate'
-  );
+  let posts = [];
+  let loadError = false;
 
-  const posts = await getPublishedPosts();
+  try {
+    posts = await getPublishedPosts();
+  } catch (error) {
+    logBlogError('getPublishedPosts', error);
+    loadError = true;
+  }
+
+  // skip CDN caching on errors so a fix shows up immediately
+  if (!loadError) {
+    ctx.res.setHeader(
+      'Cache-Control',
+      'public, s-maxage=3600, stale-while-revalidate'
+    );
+  }
 
   return {
-    props: { posts }
+    props: { posts, loadError }
   };
 }

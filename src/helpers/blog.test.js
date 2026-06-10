@@ -49,4 +49,14 @@ describe('mapPostProperties', () => {
     const page = buildPage({ tags: { multi_select: [] } });
     expect(mapPostProperties(page).tags).toEqual([]);
   });
+
+  it('joins multi-segment rich text (Notion splits text on formatting)', () => {
+    const page = buildPage({
+      title: { title: [{ plain_text: 'My ' }, { plain_text: 'Bold' }, { plain_text: ' Post' }] },
+      excerpt: { rich_text: [{ plain_text: 'Part one, ' }, { plain_text: 'part two.' }] }
+    });
+    const post = mapPostProperties(page);
+    expect(post.title).toBe('My Bold Post');
+    expect(post.excerpt).toBe('Part one, part two.');
+  });
 });
