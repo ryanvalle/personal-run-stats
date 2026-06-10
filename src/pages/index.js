@@ -8,6 +8,7 @@ import TrendChart from '../components/TrendChart.js';
 import StatCounter from '../components/StatCounter.js';
 import SectionHeader from '../components/SectionHeader.js';
 import SectionSubHeader from '../components/SectionSubHeader.js';
+import Footer from '../components/Footer.js';
 import MetaHead from '@/components/MetaHead.js';
 import { TYPE_LABELS, raceMiles } from '../helpers/race';
 import { Client } from "@notionhq/client"
@@ -95,9 +96,7 @@ export default function Home(props) {
         <SectionHeader emoji="🏁" text="Race History" />
         <RaceHistory races={previous} prIds={prIds} />
       </div>
-      <footer className="border-t border-dashed border-slate-300 dark:border-slate-800 py-8 text-center text-sm text-slate-500">
-        <span className="font-medium">running</span>with<span className="font-medium">ryan</span> 🏃‍♂️ • est. 2015
-      </footer>
+      <Footer />
     </main>
   )
 }
